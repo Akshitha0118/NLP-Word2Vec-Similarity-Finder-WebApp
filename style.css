@@ -1,16 +1,16 @@
 body {
-    background-color: #f5f7fb;
+    background-color: #1e2022;
     font-family: "Segoe UI", sans-serif;
 }
 
 h1 {
-    color: #4a4aef;
+    color: #79797e;
     text-align: center;
 }
 
 p {
     text-align: center;
-    color: #555;
+    color: #ad9d9d;
     font-size: 16px;
 }
 
@@ -19,8 +19,9 @@ input {
 }
 
 button {
-    background-color: #4a4aef !important;
+    background-color: #ebebf3 !important;
     color: white !important;
     border-radius: 8px !important;
     font-weight: bold;
 }
+
