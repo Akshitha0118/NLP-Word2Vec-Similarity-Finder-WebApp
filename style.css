@@ -19,9 +19,10 @@ input {
 }
 
 button {
-    background-color: #ebebf3 !important;
+    background-color: #1b1b1d  !important;
     color: white !important;
     border-radius: 8px !important;
     font-weight: bold;
 }
+
 
