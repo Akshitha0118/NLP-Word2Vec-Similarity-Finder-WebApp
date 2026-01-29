@@ -5,7 +5,7 @@ import os
 # ----------------------------
 # Load Word2Vec model
 # ----------------------------
-model_path = (r"C:\Users\Admin\Desktop\word2vec\word2vec_model.pkl")
+model_path = 'word2vec_model.pkl'
 
 with open(model_path, "rb") as file:
     model = pickle.load(file)
@@ -42,3 +42,4 @@ if st.button("Find Similar Words"):
                 st.write(f"**{w}**  → similarity: `{score:.4f}`")
         else:
             st.error("❌ Word not found in vocabulary")
+
