@@ -47,7 +47,7 @@ def preprocess_text(text):
 # ----------------------------
 # Streamlit UI
 # ----------------------------
-st.markdown("<h1>🔍 Word Similarity Finder (Word2Vec)</h1>", unsafe_allow_html=True)
+st.markdown("<h1>🔍NLP-Word2Vec-Similarity-Finder-WebApp</h1>", unsafe_allow_html=True)
 st.markdown("<p>Enter text, then enter a word to find similar words</p>", unsafe_allow_html=True)
 
 # Input: Text
@@ -95,3 +95,4 @@ if st.button("Find Similar Words"):
                     st.write(f"**{w}** → similarity: `{score:.4f}`")
             else:
                 st.error("❌ Word not found in the given text vocabulary")
+
