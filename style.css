@@ -1,0 +1,26 @@
+body {
+    background-color: #f5f7fb;
+    font-family: "Segoe UI", sans-serif;
+}
+
+h1 {
+    color: #4a4aef;
+    text-align: center;
+}
+
+p {
+    text-align: center;
+    color: #555;
+    font-size: 16px;
+}
+
+input {
+    border-radius: 8px !important;
+}
+
+button {
+    background-color: #4a4aef !important;
+    color: white !important;
+    border-radius: 8px !important;
+    font-weight: bold;
+}
