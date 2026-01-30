@@ -1,109 +1,64 @@
 import streamlit as st
-import nltk
 import re
-from gensim.models import Word2Vec
+import nltk
+
 from nltk.corpus import stopwords
+from gensim.models import Word2Vec
 
 # ----------------------------
-# SAFE NLTK DOWNLOADS (Streamlit Cloud Safe)
+# NLTK SETUP (ABSOLUTE SAFE)
 # ----------------------------
-@st.cache_data
-def download_nltk_resources():
-    nltk.download("punkt")
-    nltk.download("stopwords")
+@st.cache_data(show_spinner=False)
+def setup_nltk():
+    nltk.download("punkt", quiet=True)
+    nltk.download("stopwords", quiet=True)
 
-download_nltk_resources()
-
+setup_nltk()
 stop_words = set(stopwords.words("english"))
 
 # ----------------------------
-# Load CSS (Optional)
+# SIMPLE TOKENIZER (NO CRASH)
 # ----------------------------
-def load_css(file_name):
-    try:
-        with open(file_name) as f:
-            st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
-    except FileNotFoundError:
-        pass
-
-load_css("style.css")
-
-# ----------------------------
-# Safe Sentence Tokenizer
-# ----------------------------
-def safe_sent_tokenize(text):
-    try:
-        return nltk.sent_tokenize(text)
-    except LookupError:
-        return text.split(".")
-
-# ----------------------------
-# Text Preprocessing
-# ----------------------------
-def preprocess_text(text):
-    text = re.sub(r"\[[0-9]*\]", " ", text)
-    text = re.sub(r"\s+", " ", text)
+def tokenize_text(text):
     text = text.lower()
-    text = re.sub(r"\d", " ", text)
-
-    sentences = safe_sent_tokenize(text)
-    sentences = [nltk.word_tokenize(sentence) for sentence in sentences]
-
-    cleaned = []
-    for sentence in sentences:
-        words = [
-            word for word in sentence
-            if word.isalpha() and word not in stop_words
-        ]
-        if words:
-            cleaned.append(words)
-
-    return cleaned
+    text = re.sub(r"[^a-zA-Z\s]", " ", text)
+    words = text.split()
+    return [w for w in words if w not in stop_words]
 
 # ----------------------------
-# Streamlit UI
+# STREAMLIT UI
 # ----------------------------
-st.title("🔍 NLP-Word2Vec-Similarity-Finder-WebApp")
+st.title("🔍 Word2Vec Similarity Finder")
 
-user_text = st.text_area(
-    "Enter Text / Paragraph",
-    height=200,
-    placeholder="Paste or type your text here..."
-)
-
-target_word = st.text_input(
-    "Enter a word to find similar words",
-    placeholder="e.g. freedom"
-)
-
-top_n = st.slider("Number of similar words", 1, 10, 5)
+text = st.text_area("Enter text", height=200)
+word = st.text_input("Target word")
+top_n = st.slider("Top N", 1, 10, 5)
 
 # ----------------------------
-# Action
+# ACTION
 # ----------------------------
 if st.button("Find Similar Words"):
-    if not user_text.strip() or not target_word.strip():
-        st.warning("⚠️ Please enter both text and a word")
+    if not text or not word:
+        st.warning("Please enter text and a word")
     else:
-        sentences = preprocess_text(user_text)
+        tokens = tokenize_text(text)
 
-        if len(sentences) < 1:
-            st.error("❌ Not enough valid text to train Word2Vec")
+        if len(tokens) < 5:
+            st.error("Not enough valid words")
         else:
             model = Word2Vec(
-                sentences,
+                [tokens],          # 👈 IMPORTANT
                 vector_size=100,
                 window=5,
                 min_count=1,
-                workers=1  # 🔴 IMPORTANT: Cloud-safe
+                workers=1          # 👈 Cloud safe
             )
 
-            word = target_word.lower()
-
-            if word in model.wv:
-                st.subheader("✅ Similar Words")
-                for w, score in model.wv.most_similar(word, topn=top_n):
-                    st.write(f"**{w}** → `{score:.4f}`")
+            if word.lower() in model.wv:
+                st.success("Similar Words")
+                for w, s in model.wv.most_similar(word.lower(), topn=top_n):
+                    st.write(f"**{w}** → `{s:.4f}`")
             else:
-                st.error("❌ Word not found in the given text")
+                st.error("Word not found in vocabulary")
+
 
